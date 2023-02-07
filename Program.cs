@@ -156,6 +156,8 @@ bool ArrayIsPalindrome(int[] array)
     return isPalindrome;
 }
 
+// Считывает значения пользователя из строки ввода, разделенные запятой
+// Можно указать максимально допустимое количество чисел
 int[] ReadIntArray(string argumentName, int numbersCount = 0)
 {
     while (true) {
