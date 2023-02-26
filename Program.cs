@@ -3,52 +3,87 @@ while (Main()) {}
 
 bool Main()
 {
-    var taskNumber = ReadInt("номер задачи (41 или 43; 0 для выхода)");
+    var taskNumber = ReadInt("номер задачи (47, 50 или 52; 0 для выхода)");
     switch (taskNumber) {
-        // Пользователь вводит с клавиатуры M чисел. Посчитайте, сколько чисел больше 0 ввёл пользователь.
-        case 41:
+        // Задайте двумерный массив размером m×n, заполненный случайными вещественными числами.
+        case 47:
         {   
-            WriteLine("\nЗаполним массив", ConsoleColor.Yellow);  
-            var array = ReadIntArray("значения массива");     
-            var count = 0;
-            for (int i = 0; i < array.Length; i++)
+            WriteLine("\nСоздадим двумерный массив", ConsoleColor.Yellow);  
+            var array = ReadIntArray("размеры массива m, n", 2, Limits.GreaterThanZero);     
+            WriteLine("Заполняем массив натуральными числами...", ConsoleColor.Yellow);
+            Console.ForegroundColor = ConsoleColor.Green;
+            
+            var m = array[0];
+            var n = array[1];
+            float[,] array2d = new float[m, n]; 
+            var rnd = new Random();
+
+            for (int x = 0; x < m; x++)
             {
-                if (array[i] > 0)
+                for (int y = 0; y < n; y++)
                 {
-                    count++;
+                    array2d[x, y] = rnd.Next(-1000, 1000) * 0.1f;
                 }
             }
-            WriteLine("Посчитаем скоько чисел в массиве больше нуля", ConsoleColor.Yellow);
-            Console.ForegroundColor = ConsoleColor.Green;
-            WriteArrayInt(array);
-            Console.Write($" -> {count}\n\n");
+            
+            Write2DFloatArray(array2d);            
             Console.ResetColor();
             break;
         }
-        // Напишите программу, которая найдёт точку пересечения двух прямых,  
-        // заданных уравнениями y = k1 * x + b1, y = k2 * x + b2; 
-        // значения b1, k1, b2 и k2 задаются пользователем.
-        case 43:
-        {   
-            WriteLine("\nНайдем точку пересечения двух прямых\nзаданных уравнениями y = k1 * x + b1, y = k2 * x + b2", ConsoleColor.Yellow);  
-            var array = ReadIntArray("k1, b1, k2, b2", 4);          
-            Console.ForegroundColor = ConsoleColor.Green;
-            int k1 = array[0], b1 = array[1], k2 = array[2], b2 = array[3];
-            if (k1 == k2 && b1 == b2)
+        // Напишите программу, которая на вход принимает позиции элемента в двумерном массиве, 
+        // и возвращает значение этого элемента или же указание, что такого элемента нет.
+        case 50:
+        {              
+            var array2d = GetRandom2DIntArray(3, 5, 1, 10);  
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Write2DIntArray(array2d);
+            Console.ResetColor();
+
+            var rows = array2d.GetLength(0);
+            var cols = array2d.GetLength(1);
+
+            var coordinates = ReadIntArray("позицию элемента в массиве (m, n)", 2, Limits.GreaterOrEqualsZero);  
+            Write($"{coordinates[0]}, {coordinates[1]} -> ", ConsoleColor.Green);
+            if (coordinates[0] > rows - 1 || coordinates[1] > cols - 1)
             {
-                WriteLine($"b1 = {b1}, k1 = {k1}, b2 = {b2}, k2 = {k2} -> Прямые совпадают\n\n", ConsoleColor.Green);
-                break;
-            } 
-            else if (k1 == k2) 
+                Write("такого числа в массиве нет\n", ConsoleColor.Green);
+            }
+            else
             {
-                WriteLine($"b1 = {b1}, k1 = {k1}, b2 = {b2}, k2 = {k2} -> Прямые параллельны\n\n", ConsoleColor.Green);
-                break;
-            }              
-            var x = (b2 - b1) / (k1 - k2);
-            var y = (k1 * (b2 - b1)) / (k1 - k2) + b1;
-            WriteLine($"b1 = {b1}, k1 = {k1}, b2 = {b2}, k2 = {k2} -> ({x}; {y})\n\n", ConsoleColor.Green);
+                Write($"{array2d[coordinates[0], coordinates[1]]}\n", ConsoleColor.Green);
+            }
+
             break;
-        }   
+        }
+        //Задайте двумерный массив из целых чисел. Найдите среднее арифметическое элементов в каждом столбце.
+        case 52:
+        {   
+            
+            WriteLine("\nВычислим среднее арифметическое для каждого столбца массива", ConsoleColor.Yellow);  
+
+            var array2d = GetRandom2DIntArray(3, 5, 1, 10);  
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Write2DIntArray(array2d);
+            Console.ResetColor();
+
+            var rows = array2d.GetLength(0);
+            var cols = array2d.GetLength(1);
+
+            Write("Среднее арифметическое каждого столбца: ", ConsoleColor.Green);
+            for (int x = 0; x < rows; x++)
+            {
+                var mid = 0f;
+                for (int y = 0; y < cols; y++)
+                {
+                    mid += array2d[x, y];
+                }
+                mid /= cols;
+                var delimeter = x < rows - 1 ? "; " : ".";
+                Write($"{mid:F2}{delimeter}", ConsoleColor.Green);
+            }
+            Console.Write("\n");
+            break;
+        }
         case 0:
             return false;
         default:
@@ -65,6 +100,14 @@ void WriteLine(string text, ConsoleColor color)
 {
     Console.ForegroundColor = color;
     Console.WriteLine(text);   
+    Console.ResetColor();
+}
+
+// Цветное сообщение
+void Write(string text, ConsoleColor color)
+{
+    Console.ForegroundColor = color;
+    Console.Write(text);   
     Console.ResetColor();
 }
 
@@ -101,7 +144,7 @@ int ReadInt(string argumentName, bool greaterThanZero = false)
 
 // Считывает значения пользователя из строки ввода, разделенные запятой
 // Можно указать максимально допустимое количество чисел
-int[] ReadIntArray(string argumentName, int numbersCount = 0)
+int[] ReadIntArray(string argumentName, int numbersCount = 0, Limits limits = Limits.None)
 {
     while (true) {
         Console.WriteLine($"Введите {argumentName}, значения разделите запятыми: ");
@@ -113,30 +156,96 @@ int[] ReadIntArray(string argumentName, int numbersCount = 0)
             WriteLine("Некорректное количество значений", ConsoleColor.Red);
             continue;
         }
+        bool error = false;
         var intArray = new int[stringArray.Length];
         for (int i = 0; i < stringArray.Length; i++)
         {
             if (int.TryParse(stringArray[i], out int element)) 
             {
                 intArray[i] = element;
+                if (limits == Limits.GreaterThanZero && intArray[i] <= 0) 
+                {
+                    WriteLine("Все числа должны быть положительными и быть больше 0", ConsoleColor.Red);
+                    error = true;
+                    break;
+                }
+                if (limits == Limits.GreaterOrEqualsZero && intArray[i] < 0) 
+                {
+                    WriteLine("Все числа должны быть положительными", ConsoleColor.Red);
+                    error = true;
+                    break;
+                }
             } else {
                 WriteLine("Введены некорректные значения", ConsoleColor.Red);
-                continue;
+                    error = true;
+                    break;
             }
+        }
+        if (error)
+        {
+            continue;
         }
         return intArray;
     }   
 }
 
-// Выводит в консоль содержимое int массива
-void WriteArrayInt(int[] array)
+// Выводит двумерный массив в консоль
+void Write2DIntArray(int[,] array)
 {
-    for (int i = 0; i < array.Length; i++)
+    var lengthX = array.GetLength(0);
+    var lengthY = array.GetLength(1);
+    
+    Console.Write("\n");
+    for (int y = 0; y < lengthY; y++)
     {
-        Console.Write(array[i]);
-        if (i < array.Length - 1)
+
+        for (int x = 0; x < lengthX; x++)
         {
-            Console.Write(", ");
-        } 
+            Console.Write($"{array[x, y]} ");            
+        }
+        Console.Write("\n");
     }
+    Console.Write("\n");
+}
+
+// Выводит двумерный массив натуральных чисел в консоль
+void Write2DFloatArray(float[,] array)
+{
+    var lengthX = array.GetLength(0);
+    var lengthY = array.GetLength(1);
+
+    Console.Write("\n");
+    for (int y = 0; y < lengthY; y++)
+    {
+        for (int x = 0; x < lengthX; x++)
+        {
+            bool isInteger = array[x, y] * 10 % array[x, y] / 10 == 0;
+            Console.Write(isInteger ? $"{array[x, y]:F0} " : $"{array[x, y]:F1} ");
+        }
+        Console.Write("\n");
+    }
+    Console.Write("\n");
+}
+
+int[,] GetRandom2DIntArray(int sizeFrom, int sizeTo, int valuesFrom, int valuesTo)
+{
+    var rnd = new Random();
+    var n = rnd.Next(sizeFrom, sizeTo);
+    var m = rnd.Next(sizeFrom, sizeTo);
+    int[,] array2d = new int[m, n];
+    for (int x = 0; x < m; x++)
+    {
+        for (int y = 0; y < n; y++)
+        {
+            array2d[x, y] = rnd.Next(valuesFrom, valuesTo);
+        }
+    }    
+    return array2d;
+}
+
+enum Limits
+{
+    None,
+    GreaterThanZero,
+    GreaterOrEqualsZero
 }
