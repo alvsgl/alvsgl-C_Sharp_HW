@@ -78,7 +78,9 @@ bool Main()
                 }
                 mid /= cols;
                 var delimeter = x < rows - 1 ? "; " : ".";
-                Write($"{mid:F2}{delimeter}", ConsoleColor.Green);
+
+                var value = IsInteger(mid) ? $"{mid:F0}" : $"{mid:F2}";
+                Write($"{value}{delimeter}", ConsoleColor.Green);
             }
             Console.Write("\n");
             break;
@@ -217,9 +219,8 @@ void Write2DFloatArray(float[,] array)
     for (int y = 0; y < lengthY; y++)
     {
         for (int x = 0; x < lengthX; x++)
-        {
-            bool isInteger = array[x, y] * 10 % array[x, y] / 10 == 0;
-            Console.Write(isInteger ? $"{array[x, y]:F0} " : $"{array[x, y]:F1} ");
+        {            
+            Console.Write(IsInteger(array[x, y]) ? $"{array[x, y]:F0} " : $"{array[x, y]:F1} ");
         }
         Console.Write("\n");
     }
@@ -240,6 +241,11 @@ int[,] GetRandom2DIntArray(int sizeFrom, int sizeTo, int valuesFrom, int valuesT
         }
     }    
     return array2d;
+}
+
+bool IsInteger(float value)
+{
+    return value % Math.Floor(value) == 0;
 }
 
 enum Limits
