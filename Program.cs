@@ -3,85 +3,192 @@ while (Main()) {}
 
 bool Main()
 {
-    var taskNumber = ReadInt("номер задачи (47, 50 или 52; 0 для выхода)");
+    var taskNumber = ReadInt("номер задачи (54, 56, 58, 60 или 62; 0 для выхода)");
     switch (taskNumber) {
         // Задайте двумерный массив размером m×n, заполненный случайными вещественными числами.
-        case 47:
+        case 54:
         {   
-            WriteLine("\nСоздадим двумерный массив", ConsoleColor.Yellow);  
-            var array = ReadIntArray("размеры массива m, n", 2, Limits.GreaterThanZero);     
-            WriteLine("Заполняем массив натуральными числами...", ConsoleColor.Yellow);
+            WriteLine("\nСоздадим двумерный массив заполненный случайными числами:", ConsoleColor.Yellow); 
+
+            var arraySize = ReadIntArray("размеры массива (m, n)", 2, Limits.GreaterThanZero);
+            var rows = arraySize[0];
+            var cols = arraySize[1];
+            var array2d = GetRandomIntArray(rows, cols, 0, 10);
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Write2DIntArray(array2d);
+            WriteLine("Отсортируем строки массива по убыванию:", ConsoleColor.Yellow); 
             Console.ForegroundColor = ConsoleColor.Green;
-            
-            var m = array[0];
-            var n = array[1];
-            float[,] array2d = new float[m, n]; 
-            var rnd = new Random();
-
-            for (int x = 0; x < m; x++)
+            for (int i = 0; i < cols; i++)
             {
-                for (int y = 0; y < n; y++)
+                var checkIndex = 0;
+                while (checkIndex < rows)
                 {
-                    array2d[x, y] = rnd.Next(-1000, 1000) * 0.1f;
+                    for (int j = checkIndex; j < rows; j++)
+                    {
+                        if (array2d[checkIndex, i] < array2d[j, i])
+                        {
+                            var temp = array2d[checkIndex, i];
+                            array2d[checkIndex, i] = array2d[j, i];
+                            array2d[j, i] = temp;
+                        }            
+                    }
+                    checkIndex++;
                 }
             }
-            
-            Write2DFloatArray(array2d);            
+            Write2DIntArray(array2d);
             Console.ResetColor();
             break;
         }
-        // Напишите программу, которая на вход принимает позиции элемента в двумерном массиве, 
-        // и возвращает значение этого элемента или же указание, что такого элемента нет.
-        case 50:
+        // Задайте прямоугольный двумерный массив. Напишите программу, 
+        // которая будет находить строку с наименьшей суммой элементов.
+        case 56:
         {              
-            var array2d = GetRandom2DIntArray(3, 5, 1, 10);  
+            WriteLine("\nСоздадим прямоугольный двумерный массив заполненный случайными числами:", ConsoleColor.Yellow); 
+
+            var arraySize = ReadInt("размер массива", true);
+            var rows = arraySize;
+            var cols = arraySize;
+            var array2d = GetRandomIntArray(rows, cols, 0, 10);
+
             Console.ForegroundColor = ConsoleColor.Yellow;
             Write2DIntArray(array2d);
             Console.ResetColor();
-
-            var rows = array2d.GetLength(0);
-            var cols = array2d.GetLength(1);
-
-            var coordinates = ReadIntArray("позицию элемента в массиве (m, n)", 2, Limits.GreaterOrEqualsZero);  
-            Write($"{coordinates[0]}, {coordinates[1]} -> ", ConsoleColor.Green);
-            if (coordinates[0] > rows - 1 || coordinates[1] > cols - 1)
+            var minSumIndex = 0;         
+            var minSum = int.MaxValue;   
+            for (int i = 0; i < cols; i++)
             {
-                Write("такого числа в массиве нет\n", ConsoleColor.Green);
+                var sum = 0;
+                for (int j = 0; j < rows; j++)
+                {
+                    sum += array2d[j, i];                    
+                }
+                if (sum < minSum) {
+                    minSum = sum;
+                    minSumIndex = i;
+                }
             }
-            else
-            {
-                Write($"{array2d[coordinates[0], coordinates[1]]}\n", ConsoleColor.Green);
-            }
-
+            minSumIndex++;
+            WriteLine($"{minSumIndex} - строка с наименьшей суммой элементов", ConsoleColor.Green);
             break;
         }
-        //Задайте двумерный массив из целых чисел. Найдите среднее арифметическое элементов в каждом столбце.
-        case 52:
+        //Задайте две матрицы. Напишите программу, которая будет находить произведение двух матриц.
+        case 58:
         {             
-            WriteLine("\nВычислим среднее арифметическое для каждого столбца массива", ConsoleColor.Yellow);  
+            WriteLine("\nЗададим две матрицы одинакового размера заполненные случайными числами:", ConsoleColor.Yellow); 
+            var matrixSize = ReadInt("размер матриц", true);
 
-            var array2d = GetRandom2DIntArray(3, 5, 1, 10);  
+            var mA = GetRandom2DIntArray(matrixSize, matrixSize, 1, 10);  
+            var mB = GetRandom2DIntArray(matrixSize, matrixSize, 1, 10);  
+
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Write2DIntArray(array2d);
+            Write2DIntArray(mA);
+            Console.WriteLine("умножим на");
+            Write2DIntArray(mB);
             Console.ResetColor();
 
-            var rows = array2d.GetLength(0);
-            var cols = array2d.GetLength(1);
-
-            Write("Среднее арифметическое каждого столбца: ", ConsoleColor.Green);
-            for (int x = 0; x < rows; x++)
+            var mResult = new int[matrixSize, matrixSize];
+            for (int i = 0; i < matrixSize; i++)
             {
-                var mid = 0f;
-                for (int y = 0; y < cols; y++)
+                for (int j = 0; j < matrixSize; j++)
                 {
-                    mid += array2d[x, y];
-                }
-                mid /= cols;
-                var delimeter = x < rows - 1 ? "; " : ".";
-
-                var value = IsInteger(mid) ? $"{mid:F0}" : $"{mid:F2}";
-                Write($"{value}{delimeter}", ConsoleColor.Green);
+                    for (int k = 0; k < matrixSize; k++)
+                    {
+                       mResult[i, j] += mA[k, j] * mB[i, k];
+                    }
+                }               
             }
+
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Результирующая матрица:");
+            Write2DIntArray(mResult);
+            Console.ResetColor();
+            break;
+        }
+        // Сформируйте трёхмерный массив из неповторяющихся двузначных чисел. 
+        // Напишите программу, которая будет построчно выводить массив, добавляя индексы каждого элемента.
+        case 60:
+        {
+            WriteLine("\nСоздадим массив 2 x 2 x 2 и заполним его неповторяющимися двузначными числами\n", ConsoleColor.Yellow); 
+            var size = 2;
+            var array3d = new int[size, size, size];
+            var randomNumbers = new int[size * size * size];
+            var rnd = new Random();
+            
+            Console.ForegroundColor = ConsoleColor.Green;
+
+            var numbersCount = 0;
+            for (int k = 0; k < size; k++)
+            {
+                for (int i = 0; i < size; i++)
+                {
+                    for (int j = 0; j < size; j++)
+                    {
+                        bool unique = false;
+                        while (!unique) 
+                        {
+                            var matched = false;
+                            var newRandomNumber = rnd.Next(10, 100);
+                            for (int l = 0; l < randomNumbers.Length; l++)
+                            {
+                                if (newRandomNumber == randomNumbers[l])
+                                {
+                                    matched = true;
+                                    break;
+                                }
+                            }
+                            unique = !matched;
+                            if (unique)
+                            {
+                                randomNumbers[numbersCount] = newRandomNumber;
+                                numbersCount++;
+                            }
+                        }
+                        array3d[i, j, k] = randomNumbers[numbersCount - 1];
+                        var line = (numbersCount % 2 != 0) ? " " : "\n";
+                        Console.Write($"{array3d[i, j, k]}({i}{j}{k}){line}");
+                    }                    
+                }                
+            }
+            Console.ResetColor();
+            Console.Write("\n");
+            break;
+        }
+        // Напишите программу, которая заполнит спирально массив 4 на 4
+        case 62:
+        {
+            WriteLine("\nСоздадим массив и заполним его по спирали (по условию задачи размер 4 x 4)\n", ConsoleColor.Yellow); 
+            var dimensions = ReadIntArray("размеры массива", 2, Limits.GreaterThanZero);
+            var width = dimensions[0];
+            var height = dimensions[1];
+            var array2d = new int[width, height];
+            var indexesArray = new int[width, height];
+
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    indexesArray[i, j] = width * j + i;
+                }
+            }            
+
+            var numbers = 0;
+            while (numbers < width * height) 
+            {
+                for (int i = 0; i < indexesArray.GetLength(0); i++)
+                {
+                    var index = indexesArray[i, 0];
+                    array2d[index % width, index / width] = numbers;
+                    numbers++; 
+                }
+                indexesArray = CutLineAndRotateCCW(indexesArray);
+            }
+
+            Console.ForegroundColor = ConsoleColor.Green;
+
+            Write2DIntArray(array2d, width * height);
+            
+            Console.ResetColor();
             Console.Write("\n");
             break;
         }
@@ -96,19 +203,32 @@ bool Main()
     return true;
 }
 
+int[,] CutLineAndRotateCCW(int[,] array)
+{   
+    // уменьшим ширину нового массива на 1
+    var rows = array.GetLength(1) - 1;
+    var cols = array.GetLength(0);
+
+    var newArray = new int[rows, cols];
+
+    for (int i = 0; i < rows; i++)
+    {
+        for (int j = 0; j < cols; j++)
+        {
+            // будем брать значение из старого массива со смещением по Y на 1
+            var shiftOldX = i + 1; 
+            newArray[i, j] = array[(cols - 1) - j, shiftOldX];
+        }       
+    }
+    
+    return newArray;
+}
+
 // Цветное сообщение
 void WriteLine(string text, ConsoleColor color)
 {
     Console.ForegroundColor = color;
     Console.WriteLine(text);   
-    Console.ResetColor();
-}
-
-// Цветное сообщение
-void Write(string text, ConsoleColor color)
-{
-    Console.ForegroundColor = color;
-    Console.Write(text);   
     Console.ResetColor();
 }
 
@@ -191,7 +311,7 @@ int[] ReadIntArray(string argumentName, int numbersCount = 0, Limits limits = Li
 }
 
 // Выводит двумерный массив в консоль
-void Write2DIntArray(int[,] array)
+void Write2DIntArray(int[,] array, int fillZeroDigits = 0)
 {
     var lengthX = array.GetLength(0);
     var lengthY = array.GetLength(1);
@@ -202,25 +322,15 @@ void Write2DIntArray(int[,] array)
 
         for (int x = 0; x < lengthX; x++)
         {
-            Console.Write($"{array[x, y]} ");            
-        }
-        Console.Write("\n");
-    }
-    Console.Write("\n");
-}
-
-// Выводит двумерный массив натуральных чисел в консоль
-void Write2DFloatArray(float[,] array)
-{
-    var lengthX = array.GetLength(0);
-    var lengthY = array.GetLength(1);
-
-    Console.Write("\n");
-    for (int y = 0; y < lengthY; y++)
-    {
-        for (int x = 0; x < lengthX; x++)
-        {            
-            Console.Write(IsInteger(array[x, y]) ? $"{array[x, y]:F0} " : $"{array[x, y]:F1} ");
+            if (fillZeroDigits > 0)
+            {
+                int length = fillZeroDigits.ToString("D").Length;
+                Console.Write(array[x, y].ToString("D" + length) + " ");      
+            } 
+            else 
+            {
+                Console.Write($"{array[x, y]} ");            
+            }
         }
         Console.Write("\n");
     }
@@ -243,9 +353,19 @@ int[,] GetRandom2DIntArray(int sizeFrom, int sizeTo, int valuesFrom, int valuesT
     return array2d;
 }
 
-bool IsInteger(float value)
+int[,] GetRandomIntArray(int cols, int rows, int rndA, int rndB)
 {
-    return value % Math.Floor(value) == 0;
+    int[,] array2d = new int[cols, rows]; 
+    var rnd = new Random();
+
+    for (int i = 0; i < cols; i++)
+    {
+        for (int j = 0; j < rows; j++)
+        {
+            array2d[i, j] = rnd.Next(rndA, rndB);
+        }
+    }
+    return array2d;
 }
 
 enum Limits
