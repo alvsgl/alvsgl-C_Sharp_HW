@@ -236,7 +236,7 @@ void WriteLine(string text, ConsoleColor color)
 int ReadInt(string argumentName, bool greaterThanZero = false)
 {
     while (true) {
-        Console.Write($"Введите {argumentName}: ");
+        Console.Write($"Введите {argumentName}: "); 
         try
         {
             var intInput = int.Parse(Console.ReadLine());            
